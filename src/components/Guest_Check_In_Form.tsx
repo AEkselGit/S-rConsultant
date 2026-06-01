@@ -1,21 +1,55 @@
 "use client";
 
+import { useState } from "react";
 import FormField from "./Form_Field";
 
+type View = "form" | "success";
+
 export default function Guest_Check_In_Form() {
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const [view, setView] = useState<View>("form");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    setIsSubmitting(true);
 
     const formData = new FormData(event.currentTarget);
 
     const values = {
-      name: formData.get("name"),
-      company: formData.get("company"),
-      email: formData.get("email"),
-      phoneNumber: formData.get("phoneNumber"),
+      name: String(formData.get("name") ?? ""),
+      company: String(formData.get("company") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      phoneNumber: String(formData.get("phoneNumber") ?? ""),
     };
 
-    console.log(values);
+    const response = await fetch("/api/guests", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+
+    setIsSubmitting(false);
+
+    if (!response.ok) {
+      console.error("Failed to submit guest");
+      return;
+    }
+
+    setView("success");
+  }
+
+  if (view === "success") {
+    return (
+      <div className="flex items-center justify-center">
+        <div className="flex flex-col gap-4  p-6 text-center">
+          <h1 className="text-2xl font-semibold">Check-in complete</h1>
+          <p>You have been checked in successfully.</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -43,10 +77,10 @@ export default function Guest_Check_In_Form() {
 
         <div className="flex justify-end">
           <button
-            className="bg-primary text-background p-2 rounded-full"
             type="submit"
+            disabled={isSubmitting}
           >
-            Submit
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </div>
       </form>
