@@ -78,6 +78,7 @@ export default function Guest_Check_In_Form() {
         <div className="flex justify-end">
           <button
             type="submit"
+            className="bg-primary rounded-full p-2 text-background"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Submitting..." : "Submit"}
