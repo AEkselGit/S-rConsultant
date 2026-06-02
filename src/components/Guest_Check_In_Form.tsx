@@ -9,7 +9,7 @@ export default function Guest_Check_In_Form() {
   const [view, setView] = useState<View>("form");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setIsSubmitting(true);
